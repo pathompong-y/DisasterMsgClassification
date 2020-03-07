@@ -12,3 +12,5 @@
     `python run.py`
 
 3. Go to https://view6914b2f4-3001.udacity-student-workspaces.com/
+
+4. Install package
