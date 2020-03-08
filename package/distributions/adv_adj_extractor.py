@@ -12,18 +12,16 @@ class AdvAdjExtractor(BaseEstimator, TransformerMixin):
     This is the custom transformer class.
     This class will add additional features to the data by counting the number of adverb and adjectives
     add to the input dataframe and return the result.
-    
     """
-    
-    def adj_adv_count(self, text):
-        """   
 
+    def adj_adv_count(self, text):
+        """
         This function expected input as sentence.
         The function will tokenize and lemmatize the token then add PoS tag to each token.
         Finally, return the count of adverb and adjectives.
 
         Parameter: text (string) - sentence to count adj and adv
-        Output: adj_adv (int) - count of adj_adv
+        Return: adj_adv (int) - count of adj_adv
         """
         # Tokenize and clean with lemmatizer
         token_list = self.tokenize(text)
@@ -36,13 +34,13 @@ class AdvAdjExtractor(BaseEstimator, TransformerMixin):
             if tag in ['JJ','JJR','JJS','RB','RBR','RBS']:
                 adj_adv = adj_adv+1
         return adj_adv
-    
+
     def tokenize(self,text):
         """
         Tokenize the sentence and also clean the token with lemmatizer.
 
         Parameter: text (string) - Sentence to be tokenize
-        Output: clean_tokens (list) - List of lemmatized token
+        Return: clean_tokens (list) - List of lemmatized token
         """
         # Replace none-character with space
         text = re.sub('[^A-Za-z0-9]',' ',text)

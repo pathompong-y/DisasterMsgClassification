@@ -43,7 +43,7 @@ def index():
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
     
-    # extract all catgories number
+    # extract all catgories number for visualize - exclude the type that is not categories
     df1=df.drop(['message','original','genre'],axis=1)
     cat_counts = df1.astype(bool).sum(axis=0)
     cat_list = df1.columns

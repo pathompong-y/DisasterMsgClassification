@@ -25,10 +25,11 @@ def load_data(database_filepath):
     """
     Read data from database and separated to set of the input and classification categories 
     to train and evaluate the model.
-    
-    Parameter: dabase filepath e.g. data.db
-    Output: X as list of input message, Y as list of categories and list of categories name
-    
+
+    Parameter: dabase_filepath (string) - sqlite file path with its extension e.g. data.db
+    Return: X (list of string) - The list of message, 
+            Y (list of string) - The list of categories per each message, 
+            category_names (list of string) - the list of categories name
     """
     engine = db.create_engine('sqlite:///'+database_filepath)
     df = pd.read_sql_table('CategorisedMessages', engine)
@@ -52,10 +53,9 @@ def load_data(database_filepath):
 def tokenize(text):
     """
     Tokenize the sentence and also clean the token with lemmatizer.
-    
-    Input: Sentence to be tokenize
-    Output: List of lemmatized token
-    
+
+    Parameter: text (string) - Sentence to be tokenize
+    Return: clean_tokens (list of string) - List of lemmatized token
     """
     # Replace none-character with space
     text = re.sub('[^A-Za-z0-9]',' ',text)
@@ -76,9 +76,13 @@ def tokenize(text):
 
 
 def build_model():
-    # The pipeline will use Count Vectorize, TFIDF 
-    # and number of adverb and adjective which is a custom function to add new features to train the ML
-    # The best model classification model as tried so far is Random Forest.
+    """
+     The pipeline will use Count Vectorize, TFIDF 
+     and number of adverb and adjective which is a custom function to add new features to train the ML
+     The best model classification model as tried so far is Random Forest.
+
+     Return : GridSearchCV result (object)
+    """
     pipeline = Pipeline([
         ('features',FeatureUnion([
             ('text_pipeline',Pipeline([
@@ -99,6 +103,17 @@ def build_model():
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
+    """
+    Evaluate model using the input test set (X_test) comparing with the classification test set (Y_test).
+    The result is printed on screen using classification_report by using category list to group the result.
+
+    Parameter: model (object) - The predictive model,
+                X_test (DataFrame) - The input test set,
+                Y_test (DataFrame) - The expected result of input test set,
+                category_names (list) - The list of category for printing the result on the screen
+
+    Return: None
+    """
     # Predict the test data set
     y_pred = model.predict(X_test)
 
@@ -113,6 +128,7 @@ def evaluate_model(model, X_test, Y_test, category_names):
 
 
 def save_model(model, model_filepath):
+    """ Save the model in pickle format """
     pickle.dump(model, open(model_filepath, 'wb'))
 
 def main():
@@ -121,13 +137,13 @@ def main():
         print('Loading data...\n    DATABASE: {}'.format(database_filepath))
         X, Y, category_names = load_data(database_filepath)
         X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2)
-        
+
         print('Building model...')
         model = build_model()
-        
+
         print('Training model...')
         model.fit(X_train, Y_train)
-        
+
         print('Evaluating model...')
         evaluate_model(model, X_test, Y_test, category_names)
 
